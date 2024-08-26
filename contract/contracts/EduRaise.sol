@@ -2,8 +2,10 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@thirdweb-dev/contracts/extension/ContractMetadata.sol";
+import "@thirdweb-dev/contracts/extension/PlatformFee.sol";
 
-contract Campaign is ReentrancyGuard {
+contract EduRaise is ReentrancyGuard, ContractMetadata, PlatformFee {
     struct Reward {
         string title;
         string description;
@@ -24,6 +26,20 @@ contract Campaign is ReentrancyGuard {
         address[] donators;
         uint256[] donations;
         Reward[] rewards;
+    }
+
+    address public deployer;
+
+    constructor() {
+        deployer = msg.sender;
+    }
+
+    function _canSetContractURI() internal view virtual override returns (bool) {
+        return msg.sender == deployer;
+    }
+
+    function _canSetPlatformFeeInfo() internal view virtual override returns (bool) {
+        return msg.sender == deployer;
     }
 
     mapping(uint256 => CampaignStruct) public campaigns;
