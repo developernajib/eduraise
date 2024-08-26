@@ -1,1 +1,1 @@
-# Campaign
+# EduRaise - An Crowd Funding Platform
