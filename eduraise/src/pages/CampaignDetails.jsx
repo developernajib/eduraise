@@ -2,17 +2,27 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useStateContext } from "../context";
-import { CountBox, Loader, CustomButton } from "../components";
+import { CountBox, Loader } from "../components";
 import { calculateBarPercentage, daysLeft } from "../utils";
-import { TransactionButton, useReadContract } from "thirdweb/react";
+import {
+	TransactionButton,
+	useReadContract,
+	useSendTransaction,
+} from "thirdweb/react";
+import { prepareContractCall } from "thirdweb";
+import { ethers } from "ethers";
 
 const CampaignDetails = () => {
-	const { state } = useLocation();
-	const { donate, getDonations, contract, address } = useStateContext();
 	const [isLoading, setIsLoading] = useState(false);
+	const { state } = useLocation();
+	const { getDonations, contract, address } = useStateContext();
+
 	const [amount, setAmount] = useState("");
 	const [donators, setDonators] = useState([]);
 	const remainingDays = daysLeft(state.deadline);
+	const { mutate: sendDonationTransaction } = useSendTransaction({
+		payModal: false,
+	});
 
 	const {
 		data: allDonors,
@@ -25,12 +35,14 @@ const CampaignDetails = () => {
 	});
 
 	const fetchDonators = async () => {
+		setIsLoading(true);
 		const donations = await getDonations(
 			allDonors,
 			isFetchingDonors,
 			fetchDonorsError
 		);
 		setDonators(donations);
+		setIsLoading(false);
 	};
 
 	useEffect(() => {
@@ -41,8 +53,27 @@ const CampaignDetails = () => {
 
 	const handleDonate = async () => {
 		setIsLoading(true);
-		await donate(state.pId, amount, address, state.owner);
-		setIsLoading(false);
+		if (address === state.owner) {
+			toast.warning("You can't donate to your own campaign !");
+			await new Promise((resolve) => setTimeout(resolve, 6000));
+			setIsLoading(false);
+			return;
+		} else {
+			if (amount < 0) {
+				toast.warning("Please correct the amount !");
+				await new Promise((resolve) => setTimeout(resolve, 6000));
+				window.location.reload(false);
+			}
+			const transaction = prepareContractCall({
+				contract,
+				method: "function donateToCampaign(uint256 _id) payable",
+				params: [state.pId],
+				value: ethers.utils.parseEther(amount),
+			});
+			sendDonationTransaction(transaction);
+			setIsLoading(false);
+			return transaction;
+		}
 	};
 
 	return (
@@ -157,12 +188,16 @@ const CampaignDetails = () => {
 					<h4 className="font-epilogue font-semibold text-[18px] text-white uppercase">
 						Fund
 					</h4>
-
 					{remainingDays > 0 ? (
 						<div className="mt-[20px] flex flex-col p-4 bg-[#1c1c24] rounded-[10px]">
 							<p className="font-epilogue fount-medium text-[20px] leading-[30px] text-center text-[#808191]">
 								Fund the campaign
 							</p>
+							<h4 className="mt-[12px] text-red-500 font-epilogue font-semibold text-[14px] leading-[22px] text-white">
+								Note: Thirdweb payment modal will show wrong
+								value. Don't use it, thirdweb is fixing the
+								issue.
+							</h4>
 							<div className="mt-[30px]">
 								<input
 									type="number"
@@ -189,7 +224,6 @@ const CampaignDetails = () => {
 
 								<TransactionButton
 									transaction={() => handleDonate()}
-									payModal={false}
 									onTransactionConfirmed={(receipt) =>
 										toast.success(
 											"You have successfully donated to the campaign!",
@@ -198,27 +232,20 @@ const CampaignDetails = () => {
 									}
 									onTransactionSent={(result) => {
 										toast.success(
-											"Transaction submitted",
+											"Transaction submitted, please wait for confirmation",
 											result.transactionHash
 										);
 									}}
 									onError={() => {
-										toast.warning(
-											"Thirdweb caused error, but don't warry campaign donation will be continue after comfirmation !"
-										);
+										toast.warning("Pay Modal closed !");
+										window.location.reload();
 									}}
 									unstyled
-									className="w-full bg-[#8c6dfd] font-epilogue font-semibold text-[16px] leading-[26px] text-white min-h-[52px] px-4 rounded-[10px]"
+									className="w-full bg-[#09d3ac] font-epilogue font-semibold text-[16px] leading-[26px] text-white min-h-[52px] px-4 rounded-[10px]"
 								>
 									Fund Campaign
 								</TransactionButton>
 							</div>
-							<h4 className="mt-[12px] text-red-600 font-epilogue font-semibold text-[14px] leading-[22px] text-white">
-								Note: Thirdweb has some problem with there package. You fill face an error when donate. But don't worry, the transaction will be processed after you comfirm it.
-							</h4>
-							<h4 className="mt-[12px] text-red-600 font-epilogue font-semibold text-[14px] leading-[22px] text-white">
-								Note: Thirdweb payment modal will show wrong value. Don't worry we have talk to them, they will fix it as soon as possible.
-							</h4>
 						</div>
 					) : (
 						<div className="mt-[20px] flex flex-col p-4 bg-[#1c1c24] rounded-[10px]">

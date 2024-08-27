@@ -6,13 +6,16 @@ import { money } from "../assets";
 import { FormField, Loader } from "../components";
 import { checkIfImage } from "../utils";
 import { toast } from "react-toastify";
-import { TransactionButton } from "thirdweb/react";
+import { TransactionButton, useSendTransaction } from "thirdweb/react";
+import { prepareContractCall } from "thirdweb";
 
 const CreateCampaign = () => {
-	const navigate = useNavigate();
 	const [isLoading, setIsLoading] = useState(false);
-	const [isSubmitButtonDisabled, setIsSubmitButtonDisabled] = useState(false);
-	const { createCampaign } = useStateContext();
+	const navigate = useNavigate();
+	const { address, contract } = useStateContext();
+	const { mutate: sendCreateCampaignTransaction } = useSendTransaction({
+		payModal: false,
+	});
 	const [form, setForm] = useState({
 		name: "",
 		title: "",
@@ -27,6 +30,7 @@ const CreateCampaign = () => {
 	};
 
 	const handleSubmit = async () => {
+		setIsLoading(true);
 		// Get the current time and add one day (in milliseconds)
 		const now = new Date();
 		const nowTimestamp = now.getTime();
@@ -37,14 +41,20 @@ const CreateCampaign = () => {
 
 		checkIfImage(form.image, async (exists) => {
 			if (exists) {
-				setIsLoading(true);
 				if (deadlineTimestamp > oneDayLaterTimestamp) {
-					// deadline must be at least 24 hours from now
-					await createCampaign({
-						...form,
-						target: ethers.utils.parseUnits(form.target, 18),
+					const transaction = prepareContractCall({
+						contract,
+						method: "function createCampaign(address _owner, string _title, string _description, uint256 _target, uint256 _deadline, string _image) returns (uint256)",
+						params: [
+							address,
+							form.title,
+							form.description,
+							ethers.utils.parseUnits(form.target, 18),
+							new Date(form.deadline).getTime(),
+							form.image,
+						],
 					});
-					setIsLoading(false);
+					sendCreateCampaignTransaction(transaction);
 				} else {
 					toast.warning(
 						"Please enter a valid deadline, deadline must be at least 24 hours from now !"
@@ -94,18 +104,6 @@ const CreateCampaign = () => {
 						handleFormFieldChange("description", e)
 					}
 				/>
-
-				<div className="w-full flex justify-start items-center p-4 bg-[#8c6dfd] h-[120px] rounded-[10px]">
-					<img
-						src={money}
-						alt="money"
-						className="w-[40px] h-[40px] object-contain"
-					/>
-					<h4 className="font-epilogue font-bold text-[25px] text-white ml-[20px]">
-						You will get 100% of the raised amount
-					</h4>
-				</div>
-
 				<div className="flex flex-wrap gap-[40px]">
 					<FormField
 						labelName="Goal amount *"
@@ -136,7 +134,6 @@ const CreateCampaign = () => {
 				<div className="flex justify-center items-center mt-[40px]">
 					<TransactionButton
 						transaction={() => {
-							setIsSubmitButtonDisabled(true);
 							handleSubmit();
 						}}
 						onTransactionConfirmed={(receipt) => {
@@ -144,38 +141,40 @@ const CreateCampaign = () => {
 								"You have successfully created the campaign!",
 								receipt.transactionHash
 							);
-							setIsSubmitButtonDisabled(false);
 							navigate("/profile");
+							setIsLoading(false);
 						}}
 						onTransactionSent={(result) => {
 							toast.success(
 								"Transaction submitted, please wait for confirmation",
 								result.transactionHash
 							);
-							setIsSubmitButtonDisabled(false);
 						}}
-						onError={() => {
+						onError={(e) => {
 							toast.warning(
-								"Thirdweb caused error, but don't warry campaign will be created after comfirmation !"
+								"Thirdweb caused error, transaction confirmation windows will open soon."
 							);
-							setIsSubmitButtonDisabled(false);
+							setTimeout(() => {
+								setIsLoading(false);
+								navigate("/profile");
+							}, 20000);
 						}}
 						unstyled
-						className={`bg-[#8c6dfd] font-epilogue font-semibold text-[16px] leading-[26px] text-white min-h-[52px] px-4 rounded-[10px] ${
-							isSubmitButtonDisabled
-								? "opacity-50 cursor-not-allowed"
-								: ""
-						}`}
-						disabled={isSubmitButtonDisabled}
+						className="bg-[#09d3ac] font-epilogue font-semibold text-[16px] leading-[26px] text-white min-h-[52px] px-4 rounded-[10px]"
 					>
 						Submit new campaign
 					</TransactionButton>
 				</div>
-				<h4 className="mt-[12px] text-red-600 font-epilogue font-semibold text-[14px] leading-[22px] text-white">
-					Note: Thirdweb has some problem with there package. You fill
-					see an warning. But don't worry, the transaction
-					will be processed after you comfirm it.
-				</h4>
+				<div className="w-full flex justify-center items-center p-4 bg-[#8c6dfd] h-[120px] rounded-[12px] mt-[16px]">
+					<img
+						src={money}
+						alt="money"
+						className="w-[40px] h-[40px] object-contain"
+					/>
+					<h4 className="font-epilogue font-bold text-[25px] text-white ml-[20px]">
+						You will get 100% of the raised amount
+					</h4>
+				</div>
 			</div>
 		</div>
 	);

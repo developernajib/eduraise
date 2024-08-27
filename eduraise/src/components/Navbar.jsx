@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useStateContext } from "../context";
 import { CustomButton } from "./";
-import { logo, menu, closeMenu, search, profile_2 } from "../assets";
+import { logo, menu, closeMenu } from "../assets";
 import { navlinks } from "../constants";
-import { ThirdwebProvider, ConnectButton, darkTheme } from "thirdweb/react";
+import { ConnectButton, darkTheme } from "thirdweb/react";
 import { createWallet, walletConnect, inAppWallet } from "thirdweb/wallets";
 import { client } from "../client";
 

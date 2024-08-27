@@ -27,8 +27,8 @@ const Home = () => {
 	}, [isFetchingCampaigns, contract]);
 
 	const fetchCampaigns = async () => {
+		setIsLoading(true);
 		if (getCampaigns) {
-			setIsLoading(true);
 			try {
 				const data = await getCampaigns(
 					allCampaignsData,
@@ -38,12 +38,11 @@ const Home = () => {
 				setCampaigns(data);
 			} catch (error) {
 				toast.error("Failed to fetch campaigns: " + error.message);
-			} finally {
-				setIsLoading(false);
 			}
 		} else {
 			toast.error("Get campaigns function is not available.");
 		}
+		setIsLoading(false);
 	};
 
 	return (
