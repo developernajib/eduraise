@@ -1,4 +1,4 @@
-# EduRaise - An Crowd Funding Platform
+# EduRaise - A Web3 Based Educational Crowdfunding Platform
 
 ### *EduRaise: An Overview*
 
