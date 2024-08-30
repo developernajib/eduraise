@@ -14,22 +14,16 @@
    - *Blockchain Security:* By leveraging blockchain, EduRaise ensures that all transactions are secure, transparent, and immutable. Donors can track how their contributions are being used, enhancing trust in the platform.
    - *Token Economy:* EduRaise might utilize a token system for transactions, rewards, and incentives within the platform. These tokens could be exchanged or used for educational services within the ecosystem.
 
-3. *E-Learning Platform:*
-   - *Content Creation:* Educators can create and share educational content, courses, and learning materials on the platform. This enables global access to high-quality education, regardless of geographical location.
-   - *Skill Development:* Students can access a wide range of courses, from basic education to specialized skills, empowering them to advance their knowledge and careers.
-
-4. *Global Accessibility & Inclusion:*
+3. *Global Accessibility & Inclusion:*
    - *Democratizing Education:* EduRaise aims to make education more accessible to people in underrepresented or economically challenged regions. By providing a platform that supports multiple languages and currencies, it ensures that educational opportunities are available to a broader audience.
    - *Community Building:* The platform encourages the creation of global educational communities, where learners and educators can collaborate, share resources, and support each other’s growth.
 
-5. *Integration with Open Campus Ecosystem:*
+4. *Integration with Open Campus Ecosystem:*
    - *Synergy with Open Campus:* As part of the Open Campus ecosystem, EduRaise can integrate with other Web3 tools and platforms, creating a comprehensive educational network. This could include partnerships with other decentralized apps (dApps) within the ecosystem, expanding the range of services available to users.
 
 ### *Global Impact and Opportunities:*
 
 - *For Students:* EduRaise opens new avenues for students worldwide to access funding for their education. This is especially impactful for students in regions where traditional funding is scarce or non-existent. It also allows students to connect with global mentors and educators, broadening their learning horizons.
-
-- *For Educators:* The platform offers educators the opportunity to reach a global audience, share their expertise, and receive support for their initiatives. It enables them to innovate in their teaching methods and create new educational programs tailored to diverse communities.
 
 - *For Donors:* EduRaise provides donors with a secure and transparent way to contribute to educational causes they care about. They can track the impact of their donations in real-time and be assured that their contributions are making a difference.
 
