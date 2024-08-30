@@ -1,5 +1,7 @@
 # EduRaise - A Web3 Based Educational Crowdfunding Platform
 
+### Live Link: https://eduraise.netlify.app/
+
 ### *EduRaise: An Overview*
 
 *EduRaise* is a Web3-based educational crowdfunding and e-learning platform, designed specifically for the Open Campus ecosystem. It merges blockchain technology with education, providing a decentralized and transparent platform where students and educators can raise funds for educational projects, scholarships, and other initiatives.
