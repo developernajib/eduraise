@@ -105,7 +105,7 @@ const Navbar = () => {
 				)}
 
 				<div
-					className={`absolute top-[60px] right-0 left-0 bg-[#1c1c24] z-10 shadow-secondary py-4 ${
+					className={`absolute top-[60px] right-0 left-0 bg-[#1c1c24] z-10 shadow-secondary py-4 border-b border-gray-400 ${
 						!toggleDrawer ? "-translate-y-[100vh]" : "translate-y-0"
 					} transition-all duration-700`}
 				>
@@ -149,7 +149,7 @@ const Navbar = () => {
 							<CustomButton
 								btnType="button"
 								title="Create Campaign"
-								styles="bg-[#1dc071]"
+								styles="bg-[#09d3ac]"
 								handleClick={() => navigate("create-campaign")}
 							/>
 						) : (

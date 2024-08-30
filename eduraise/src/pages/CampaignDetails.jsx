@@ -11,6 +11,7 @@ import {
 } from "thirdweb/react";
 import { prepareContractCall } from "thirdweb";
 import { ethers } from "ethers";
+import ShareButton from '../components/ShareButton'
 
 const CampaignDetails = () => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -154,6 +155,17 @@ const CampaignDetails = () => {
 							</p>
 						</div>
 					</div>
+					<div>
+						<h4 className="font-epilogue font-semibold text-[18px] text-white uppercase">
+							Share
+						</h4>
+
+						<div className="mt-[20px]">
+							<p className="font-epilogue font-normal text-[16px] text-[#808191] leading-[26px] text-justify">
+								<ShareButton title={state.title} />
+							</p>
+						</div>
+					</div>
 
 					<div>
 						<h4 className="font-epilogue font-semibold text-[18px] text-white uppercase">
@@ -165,7 +177,7 @@ const CampaignDetails = () => {
 								donators.map((item, index) => (
 									<div
 										key={`${item.donator}-${index}`}
-										className="flex justify-between items-center gap-4"
+										className="overflow-auto flex justify-between items-center gap-4"
 									>
 										<p className="font-epilogue font-normal text-[16px] text-[#b2b3bd] leading-[26px] break-ll">
 											{index + 1}. {item.donator}
